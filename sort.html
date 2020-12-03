@@ -1,0 +1,208 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description: 
+
+    // The sort() method sorts (organizes) the elements of an array. 
+    // The default order is ascending ( 1 > 2 > 3 > 4 ...)
+    // It converts elements to strings 
+    // Then compares the strings using UTF-16 unit values.  (UTF gives a numeric value to each character)
+        // e.g. --> 'a' > 'A' (true)
+        // e.g. --> '21' > '1000' (true)
+        // e.g. --> 'amadeus' > '#$%' (true)
+
+  // Function signature: 
+    // arr.sort([compareFunction])
+    // function sort(array, [compareFunction])
+
+  // Parameters: 
+    // [compareFunction]
+      // A function that defines the sort order (e.g. --> ascending or descending)
+      // If there's no [compareFunction] the elements are converted to strings. 
+      // If there's no [compareFunction] the elements are sorted according each character's Unicode value. 
+
+        // firstEl (belongs to [compareFunction])
+          // The first element for comparsion. 
+
+        // secondEl (belongs to [compareFunction])
+          // The second element for comparsion. 
+
+  // Return Value:
+    // The sorted (modified) array. 
+
+  // Requiremtens: 
+
+  // If there's no [compareFunction]:
+    // If there's no [compareFunction] the elements are converted to strings. 
+    // If there's no [compareFunction] the elements are sorted according each character's Unicode value. 
+    // If there's no [compareFunction], it should sort undefined elements to the end of the array. 
+
+
+  // If there's [compareFunction]:
+    // If [compareFunction] is supplied the elements are sorted according 
+        // to the return value of the [compareFunction].
+    // If [compareFunction] is supplied it should continue to sort undefined elements to the end of the array. 
+    
+    // If a and b are two elements being compared: 
+      // If [compareFunction] return less than 0, sort a to an index lower than b. 
+        // e.g. --> a = 21 b = 33 --> a - b = -12 --> a(21) comes before b(33);
+      // If [compareFunction] returns 0 leave a and b the same (bur sorted with repsect to other elements)
+      // If [compareFunction] returns greater than 0, sort b to an index lower than a. 
+        // e.g. --> a = 10 b = 7 --> a - b = +3 --> b(7) comes before b(10);
+
+  // It should be possible to sort() objects, given the value of one of their properties. 
+
+  function sort(array, compareFunction){
+
+    if (typeof array === "number" || array === 'string') {
+    throw new TypeError('First argument must be an array or an array-like object');
+  }
+
+    // Putting the undefined values to the end. 
+    if(Array.isArray(array)){
+      for(var i = 0; i < array.length; i++){
+      array.push(array.splice(array.indexOf(undefined), 1)[0]);
+      }
+    }
+
+
+    // If there's compareFunction 
+    // THIS PART WAS "TAKEN" FROM DOCTORSTUPID MD SOLUTION; 
+    if(arguments.length > 1){
+      for (var i = 0; i < array.length; i++) {
+        var lowEl = array[i];
+        var highEl = array[i + 1];
+
+        if (i + 1 < array.length) { // As long as highEl is still within the array length.
+          if (lowEl !== undefined || highEl !== undefined) { // As long as neither are undefined, so we can compare them.
+            var compareTwoElements = compareFunction(array[i], array[i + 1]); // Loops through all array indexes.
+            // Sorts according to compareFunction || shifts undefined elements to the end.
+            if (compareTwoElements > 0 || lowEl === undefined) {
+              array[i] = highEl;
+              array[i + 1] = lowEl;
+
+              // i++ will reset to 0 when elements are switched, to avoid an endless loop.
+              if (i > 0) {
+                i = 0;
+              }
+            }
+          } 
+        }
+      }
+      return array;
+    }
+
+    // No compareFunction! 
+
+    // Converting the elements to strings. 
+      for(var i = 0; i < array.length; i++){
+      // Let undefined stay undefined 
+        if(array[i] !== undefined){
+          array[i] = String(array[i]);
+        }
+      }
+
+    // Putting the values in ascending order. 
+    var allElementsOrdered = false; 
+
+    while (allElementsOrdered === false){
+      allElementsOrdered = true;
+      
+      for(i = 1; i < array.length; i++){
+        if(array[i-1] > array[i]){
+          allElementsOrdered = false; 
+          var temporary = array[i-1];
+          array[i -1] = array[i];
+          array[i] = temporary; 
+        }
+      } 
+    }
+    return array; 
+  }
+  tests({
+    "If there's no [compareFunction] the elements are converted to strings.":function(){
+      var testArray = [4,2,3,1] ;
+      var resultOfSort = sort(testArray);
+      eq(typeof resultOfSort[0] === 'string', true);
+      eq(typeof resultOfSort[1] === 'string', true);
+      eq(typeof resultOfSort[2] === 'string', true);
+      eq(typeof resultOfSort[3] === 'string', true);
+    },
+    "If there's no [compareFunction] the elements are sorted according each character's Unicode value.":function(){
+      var testArray = [4,2,3,1] ;
+      var resultOfSort = sort(testArray);
+      eq(resultOfSort[0], "1");
+      eq(resultOfSort[1], "2");
+      eq(resultOfSort[2], "3");
+      eq(resultOfSort[3], "4");
+    },
+    "If there's no [compareFunction], it should sort undefined elements to the end of the array.":function(){
+      var testArray = [undefined, 5, undefined, 4];
+      var resultOfSort = sort(testArray);
+      eq(resultOfSort[0], 4);
+      eq(resultOfSort[1], 5);
+      eq(resultOfSort[2], undefined);
+      eq(resultOfSort[3], undefined)
+    },
+
+
+    "If [compareFunction] is supplied the elements are sorted according the function":function(){
+      var compareFunction = function(a,b){ return a - b};
+      var testArray = [10, 1, 9, 100]
+      var resultOfSort = sort(testArray, compareFunction);
+      eq(resultOfSort[0], 1);
+      eq(resultOfSort[1], 9);
+      eq(resultOfSort[2], 10);
+      eq(resultOfSort[3], 100);
+    },
+    "If [compareFunction] is supplied it should continue to sort undefined elements to the end of the array.":function(){
+      var compareFunction = function(a,b){return a - b}; 
+      var testArray = [10, undefined, 9, 100]
+      var resultOfSort = sort(testArray, compareFunction); 
+      eq(resultOfSort[testArray.length -1], undefined); 
+    },
+
+    "It should work with array-like objects":function(){
+      var testArrayLikeObject = {
+        0: 'Faro',
+        1: 'Oporto',
+        2: 'Lisbon',
+        length: 3
+      }
+      var resultOfSort = sort(testArrayLikeObject); 
+      eq(testArrayLikeObject[0], 'Faro');
+      eq(testArrayLikeObject[1], 'Lisbon');
+      eq(testArrayLikeObject[2], 'Oporto');
+    },
+
+    "If array is empty it should return the empty array":function(){
+      var testArray = []; 
+      var resultOfSort = sort(testArray); 
+      eq(resultOfSort.length, 0);
+      eq(resultOfSort, testArray);
+    },
+    "If first argument is a number or a string, it should return TypeError":function(){
+      var isTypeError = false; 
+      try {
+      sort(123);
+      } catch(e) {
+      var isTypeError = e instanceof TypeError;
+      }
+      eq(isTypeError, true);
+    }
+
+
+
+
+/*     'If [compareFunction] return less than 0, sort a to an index lower than b. ':function(){
+      fail();
+    },
+    'If [compareFunction] returns 0 leave a and b the same (bur sorted with repsect to other elements).':function(){
+      fail();
+    },
+    'If [compareFunction] returns greater than 0, sort b to an index lower than a.':function(){
+      fail(); 
+    } */
+  })
+  
+</script> 

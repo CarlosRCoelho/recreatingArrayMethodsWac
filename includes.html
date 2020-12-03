@@ -1,0 +1,146 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General Description:
+    // The includes method checks if the array includes the searched element. 
+    // It returns true, if the element is found.
+    // It returns false, if the element is not found.
+
+  // Prototype: 
+    // function includes(array, searchElement){
+    //  for(var i = 0; i < array.length; i++){
+    //   if (array[i] === searchElement){
+    //     return true;
+    //   }
+    //  }
+    //  return false; 
+    // }
+
+  // Function signature: 
+      // arr.includes(valueToFind[, fromIndex]);
+      // includes(array, valueToFind[, fromIndex]);
+
+  // Paramters: 
+      // valueToFind (The value to search for).
+      // [fromIndex] (The position in the array to begin searching valueToFind).
+
+  // Return value: 
+      // A Boolean (true or false)
+        // True if the valueToFind is found in the array. 
+        // False if the valueToFind is NOT found in the array. 
+
+  // Description: 
+      // It should search all the elements in the array. 
+      // If the valueToFind is found in the array, return true. 
+      // It should return true, just if valueToFind is strictly equal to an element in the array.
+      // If the valueToFind is NOT found in the array, return false. 
+
+      // If fromIndex, array should start to be searched at array[fromIndex].
+      // If fromIndex is bigger or equal to array.length it should return false. 
+      // If fromIndex is negative and bigger than array.length and the element is in the array is should return true. 
+          // (e.g. [4,2,3,1].includes(2, -20);)
+      // If fromIndex is negative, array should start to be searched at (arr.length + fromIndex).
+
+
+    function includes(array, valueToFind, fromIndex){
+
+      // If fromIndex exists 
+      if (arguments.length > 2){
+        // If fromIndex is negative 
+        if(fromIndex < 0){
+          // Array should start to be searched at (arr.length + fromIndex)
+            for(var i = array.length + fromIndex; i < array.length; i++){
+              if (valueToFind === array[i]){
+                return true; 
+              }
+            }
+
+            for(var i = array.length + fromIndex; i < array.length; i++){
+              if ((valueToFind === array[i]) === false){
+                return false; 
+              }
+            }
+          // ... and it's abs value is bigger than array.length
+          if (Math.abs(fromIndex) > array.length){
+            return true; 
+          }
+        }
+        
+        //If fromIndex is equal or bigger to array.length
+        if (fromIndex >= array.length){
+          return false; 
+        }
+        
+        // If valueToFind is in or after fromIndex 
+        for(var i = fromIndex; i < array.length; i++){
+          if (valueToFind === array[i]){
+            return true; 
+          }
+        }
+        
+        // If it's not 
+        for(var i = fromIndex; i < array.length; i++){
+          if ((valueToFind === array[i]) === false){
+            return false; 
+          }
+        }
+      }
+    
+      // If there is NO fromIndex 
+      for(var i = 0; i < array.length; i++){
+        if (valueToFind === array[i]){
+          return true; 
+        }
+      }
+
+      return false;
+    }
+  tests({ 
+    
+/*     'It should search all the elements in the array. ':function(){
+      resultOfIncludes = includes([1]);
+      eq(resultOfIncludes, 1);
+    }, */
+
+    'If the valueToFind is found in the array, return true. ':function(){
+      resultOfIncludes = includes([1,2,3], 3); 
+      eq(resultOfIncludes, true);
+    },
+    'It should return true, just if valueToFind is strictly equal to an element in the array.':function(){
+      resultOfIncludes = includes([1,2,3], '3'); 
+      eq(resultOfIncludes, false);
+    },
+    'If the valueToFind is NOT found in the array, return false.':function(){
+      resultOfIncludes = includes([1,2,3], 4);
+      eq(resultOfIncludes, false);
+    },
+
+
+    'If fromIndex, array should start to be searched from fromIndex value until the end.':function(){
+      resultOfIncludes = includes([1,2,3,4], 1, 1); 
+      eq(resultOfIncludes, false);
+      
+    },
+    'If fromIndex is bigger to array.length it should return false.':function(){
+      // array.length = 4 
+      // fromIndex = 5 
+      resultOfIncludes = includes([1,2,3,4], 1, 5); 
+      eq(resultOfIncludes, false);
+    },
+    'If fromIndex is equal to array.length it should return false.':function(){
+      // array.length = 4 
+      // fromIndex = 4
+      resultOfIncludes = includes([1,2,3,4], 1, 4); 
+      eq(resultOfIncludes, false);
+    },
+    'If fromIndex is negative and bigger than array.length and the element is in the array is should return true.':function(){
+      resultOfIncludes = includes([1,2,3,4], 1, -10); 
+      eq(resultOfIncludes, true); 
+    },
+    'If fromIndex is negative, array should start to be searched at (arr.length + fromIndex).':function(){
+      var resultOfIncludes = includes([1,2,3,4],3, -1); 
+      eq(resultOfIncludes, false); 
+    }
+
+  })
+</script> 

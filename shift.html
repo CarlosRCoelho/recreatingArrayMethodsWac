@@ -1,0 +1,158 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description: 
+    // The shift method removes the first element from an array. 
+    // It returns that removed element. 
+
+  // Prototype 
+  // function shift(originalArray){
+  //    var firstElement = originalArray[0]; 
+  //    delete firstElement; 
+  //    
+  //    for (var i = 1; i < originalArray.length; i++){
+  //      originalArray[i] = originalArray[i+1];
+  //    }
+  //    
+  //    originalArray.length--;
+  //    return firstElement; 
+  // }
+
+  // Function signature 
+    // arr.shift(); 
+    // shift(array);
+  
+  // Parameters 
+    // No original parameters 
+    // Now as originalArray as 1st parameter 
+
+  // Return value 
+    // The removed element from the array. 
+    // Undefined if the array is empty 
+
+  // Description 
+
+    // It should remove the element at the zeroth index. 
+    // It should shift the values of the indexes of elements remaining (-1). 
+    // It should remove the element with the zeroht index, even if it's an empty value. 
+    // It should return the value that was removed. 
+    // It should change the length of the original array. 
+
+    // It should return undefined, if originalArray.length === 0. 
+    
+    // It should work when calling it using call().
+    // It should work when calling it using apply(). 
+    
+    // It should throw a TypeError when called on a string. 
+    // It should throw a TypeError when called on null. 
+    // It should throw a TypeError when called on undefined. 
+
+  function shift(originalArray){
+
+      if(typeof originalArray === 'string' || typeof originalArray === null || typeof originalArray === undefined){
+        throw new TypeError;
+      }
+
+      if (originalArray.length === 0){
+        return undefined;  
+      }
+      var firstElement = originalArray[0]; 
+      delete firstElement; 
+      
+      for (var i = 0; i < originalArray.length; i++){
+        originalArray[i] = originalArray[i+1];
+      }
+      
+      originalArray.length--;
+      //console.log(originalArray);
+      return firstElement; 
+  }
+
+tests ({
+
+  'It should remove the element at the zeroth index.':function(){
+    var testArray = [1,2,3];
+    var removedElement = shift(testArray);
+    eq(removedElement, 1);
+  },
+  'It should shift the values of the indexes of elements remaining (-1).':function(){
+    var testArray = [1,2,3];
+    var resultOfShift = shift(testArray); 
+    eq(testArray[0], 2);
+    eq(testArray[1], 3);
+  }, 
+  "It should remove the element with the zeroht index, even if it's an empty value.":function(){
+    var testArray = [,,2,3];
+    var removedElement = shift(testArray);
+    eq(removedElement, undefined);
+  }, 
+  'It should return the value that was removed.':function(){
+    var testArray = [1,2,3];
+    var resultOfShift = shift(testArray);
+    eq(resultOfShift, 1);
+  }, 
+  'It should change the length of the original array.':function(){
+    var testArray = [1,2,3];
+    var resultOfShift = shift(testArray);
+    eq(testArray.length, 2); 
+  }, 
+
+
+  'It should return undefined, if originalArray.length === 0.':function(){
+    var testArray = [];
+    var resultOfShift = shift(testArray);
+    eq(resultOfShift, undefined); 
+  }, 
+
+
+  'It should work when calling it using call().':function(){
+    // Does this make sense ? 
+    var testArray = [0, 1];
+    var resultOfShift = testArray.shift.call(testArray);
+    eq(testArray[0], 1);
+    eq(testArray.length, 1);      
+    eq(resultOfShift, 0);
+  }, 
+
+  'It should work when calling it using apply().':function(){
+    // Does this make sense ? 
+    var testArray = [0, 1];
+    var resultOfShift = testArray.shift.apply(testArray);
+    eq(testArray[0], 1);
+    eq(testArray.length, 1);      
+    eq(resultOfShift, 0);
+  }, 
+
+
+  'It should throw a TypeError when called on a string.':function(){
+    var isTypeError = false; 
+    try {
+      shift('string')
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  }, 
+  'It should throw a TypeError when called on null.':function(){
+    var isTypeError = false; 
+    try {
+      shift(null)
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  }, 
+  'It should throw a TypeError when called on undefined.':function(){
+    var isTypeError = false; 
+    try {
+      shift(undefined)
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  }
+})
+</script> 

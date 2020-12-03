@@ -1,0 +1,119 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description 
+    // The lastIndexOf method returns the last index at which an
+    // element of our choice can be found in the array.
+    // The element is searched from the last item to the first (backwards).
+    // If there's no correspondence, lastIndexOf returns -1. 
+
+  // Prototype
+    // function lastIndexOf (array, searchElement){
+    //  var lastIndex = array.length - 1;
+    //  for (var i = lastIndex; i > 0; i--){
+    //    if (array[i] === searchElement){
+    //      return i
+    //    }
+    //  }
+    // }
+
+  // Function signature: 
+      // arr.lastIndexOf(searchElement[, fromIndex]);
+      // lastIndexOf(array, searchElement [,fromIndex]);
+
+// Parameters: 
+    // searchElement --> (element to be searched)
+    // [fromIndex] --> (The index to start the search at)
+
+// Return value 
+    // The last index of the element that was searched and found. 
+    // -1 if the element it's not found. 
+
+// Requirements
+      // It should return the last index if the element searched for is in the array. 
+      // It should return -1 if the element searched is NOT in the array.
+      // It should scan the array backwards (from last index to the first).
+      // It should return if it exist a strict equality beetween an element in the array and searchElement.  
+      
+    // If fromIndex: 
+      // It should search the whole array if fromIndex is greater than array.length.
+      // It should search the whole array if fromIndex is equal to array.length. 
+      // If fromIndex is negative it should just count the amout of elements specified in fromIndex. 
+      // If fromIndex is negative it should search the array from back to front. 
+      // If fromIndex is higher than array.length, it should return -1.  
+
+  function lastIndexOf(array, searchElement, fromIndex){
+
+    // If there is a fromIndex value. 
+    if (arguments.length > 2){
+      if(fromIndex < 0){
+        if (Math.abs(fromIndex) > array.length){
+          return -1;
+        }
+      }
+      var startSearchingFrom = array.length - fromIndex*-1; 
+      for (var i = startSearchingFrom; i => 0; i--){
+        if (array[i] === searchElement){
+          return i; 
+        }
+      }
+    }
+
+    var lastIndex = array.length - 1; 
+    for (var i = lastIndex; i > 0; i--){
+      if (array[i] === searchElement){
+        return i; 
+      }
+    }
+    return -1;
+  };
+
+  tests({
+    'It should return the last index of the element searched if it is in the array.':function(){
+      // lastIndexOf = ([array], searchElement)
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1);
+      eq(resultLastIndexOf, 2);
+    }, 
+    'It should return -1 if the element searched is NOT in the array.':function(){
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 8);
+      eq(resultLastIndexOf, -1) 
+    },
+/*     'It should scan the array backwards (from last index to the first).':function(){
+      var testArray = [1,2,1];
+      resultLastIndexOf = lastIndexOf(testArray, testArray[2]);
+      eq(resultLastIndexOf, 1);
+    }, */
+    'It should return just if it exist a strict equality beetween an element in the array and searchElement.':function(){
+      resultLastIndexOf = lastIndexOf([1,2,1,4], '1');
+      eq(resultLastIndexOf, -1);
+
+    },
+
+
+    'It should search the whole array if fromIndex is greater than array.length.':function(){
+      // array.length = 4 and fromIndex = 20 
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1, 20); 
+      eq(resultLastIndexOf, 2);
+    },
+    'It should search the whole array if fromIndex is equal to array.length. ':function(){
+      // array.length = 4 and fromIndex = 4
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1, 4); 
+      eq(resultLastIndexOf, 2);
+    },
+    'If fromIndex is negative it should start searching the last index from the specified number (including) from back to start':function(){
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1, -3);
+      eq(resultLastIndexOf, 0);
+    },
+    'If fromIndex is negative it should continue to search the array from back to front.':function(){
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1, -1);
+      eq(resultLastIndexOf, 2);
+    },
+    'If (fromIndex*(-1) > array.length) is less than 0, it should return -1.':function(){
+      // array.length = 4 
+      resultLastIndexOf = lastIndexOf([1,2,1,4], 1, -5);
+      eq(resultLastIndexOf, -1);
+    }
+
+    
+  })
+</script> 

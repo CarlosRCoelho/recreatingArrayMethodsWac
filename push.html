@@ -1,0 +1,145 @@
+<script src="../simpletest.js"></script>
+<script>
+  // General description 
+    // The push() method adds element(s) to the end of an array. 
+    // It returns the new lentgth of that array. 
+
+  // Prototype 
+    // function push(array [,element1[,...[elementN]]]); 
+    //  var pushedArray = []; 
+    //  for(var i = 1; i < arguments.length; i++){
+    //    pushedArray = pushedArray.concat(argument[i]);
+    //  }
+    //  return pushedArray.length 
+
+  // Function Syntax 
+      // arr.push([element1[, ...[, elementN]]]);
+      // push([element1[, ...[, elementN]]]);
+
+  // Parameters 
+      // elementN (The element(s) to add to the end of the array); 
+
+  // Return Value
+      // The new length of the array. 
+
+  // Requirements 
+      
+      // It should return an intenger. 
+      // It should return the new length of the array provided. 
+      // It should return the length of the array provided, if no new elements exist. 
+     
+      // It should add elements to the end of the array provided. 
+      // It should push the the new elements, even if the array is empty. 
+
+      // **It should modify array, not creating a new array
+
+      // It should throw 'Uncaught SyntaxError', if the first argument is not an array.
+
+      // **It should be able to be used with call()
+      // **It should be able to be used with apply() 
+      
+
+    
+
+      function push(array){
+
+        //If originalArray is not an array, throw Syntax Error. 
+        if (Array.isArray(array) === false){
+          throw new SyntaxError('First argument should be an array');
+        } 
+
+        // If there's elements to add to the array. 
+        if (arguments.length > 1){
+          var pushedArray = []; 
+          for(var i = 1; i < arguments.length; i++){
+          pushedArray = pushedArray.concat(arguments[i]);
+          }
+          var finalLength = array.length + pushedArray.length;
+          return finalLength; 
+        }
+
+        // If there's no elements to add. 
+        var length = array.length; 
+        return length; 
+      }
+  tests({
+
+    'It should return an intenger.':function(){
+      var pushResult = push([1,2,3]);
+      eq(typeof pushResult === 'number', true)
+      eq(pushResult%1 === 0, true); 
+    },
+    'It should return the length of the array provided, if no new elements exist.':function(){
+      var pushResult = push([1,2,3]);
+      eq(pushResult, 3);
+    },
+    'It should add elements to the end of the array provided.':function(){
+      // Equal to test bellow
+      testArray = [1,2,3];
+      var pushResult = push(testArray, 4);
+      eq(pushResult, 4);
+    },
+
+    'It should return the new length of the array provided.':function(){
+      // Equal to the test above
+      testArray = [1,2,3];
+      var pushResult = push(testArray, 4);
+      eq(pushResult, 4);
+    },
+    'It should push the the new elements, even if the array is empty.':function(){
+      // array.length = 0.
+      // added three elements.
+      var pushedArray = push([], 1, 2, 3);
+      eq(pushedArray, 3);
+    },
+
+
+    'It should modify array, not creating a new array.':function(){
+      var array = [1,2,3];
+      var duplicateArray = array; 
+      push(array, 4); 
+      eq(duplicateArray, array);
+    },
+
+
+    "It should throw 'Uncaught SyntaxError', if the first argument is not an array.":function(){
+      var syntaxError = false; 
+      try {
+        push('string', 1)
+      } catch(error) {
+        syntaxError = error instanceof SyntaxError;
+      }
+
+      eq(syntaxError, true);
+    },
+
+    // Check what are call() and apply();
+
+    //Call() 
+      // The call() allows for a function/method belonging to one object 
+      // to be assigned and called for a different object.
+
+    //Apply() 
+      // Similar to call(), but it differs on the type of arguments it supports. 
+
+    'It should be able to be used with call()':function(){
+      // call() accepts an argument list.
+      var array = [0];
+      array.push.call(array, 1);
+      eq(array.length, 2);
+      eq(array[0], 0);
+      eq(array[1], 1);
+    },
+    'It should be able to be used with apply()':function(){
+      // apply accepts a single array of arguments. 
+      var array = [0];
+      var argumentArray = [1, 2];
+      array.push.apply(array, argumentArray);
+      eq(array.length, 3);
+      eq(array[0], 0);
+      eq(array[1], 1);
+      eq(array[2], 2);
+    }
+  })
+
+</script> 

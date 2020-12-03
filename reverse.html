@@ -1,0 +1,134 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description: 
+    // The reverse() method reverses an array. 
+    // (the first element becomes the last and vice-versa).
+
+  // Prototype: 
+    // I have to use a for loop 
+    // I can't perform the loop array length times (it will reverse the reversed elements)
+    // I should perfrom the loop (array.length/2) times. 
+    // I want to reverse the first with the last
+    // I want to reverse the second with the secondo-to-last 
+    // I want to stop in the middle! 
+
+    // function reverse(array){
+    //  for(var i = 0; i < (array.length/2); i++){
+    //    array[i] = array[array.length - 1 - i]
+    //  }
+    // }
+
+  // Function Signature: 
+    // array.reverse(); 
+    // function reverse(array); 
+
+  // Parameters: 
+    // NONE 
+
+  // Return Value: 
+    // The reversed array. 
+
+  
+  // Requirements: 
+
+    // It should reverse the positioning of the elements in the array.
+    // It should modify the original array (mutate).  
+    // It should work with holes. 
+
+    // It should return an empty array if original array is empty. 
+        // (e.g. reverse([]) -> [])
+    // It should return the only element if there is just one element in the original array. 
+        // (e.g. reverse(['hey']) -> ['hey'])
+
+    // It should be possible to 'call' reverse() with objects resembling arrays. 
+    // It should be possible to 'apply' reverse() to objects resembling arrays. 
+
+    // It should work with booleans. 
+    // It should work with null. 
+    // It should work with undefined. 
+
+    function reverse(array){
+      for(var i = 0; i < (array.length/2); i++){
+        var element = array[i];
+        array[i] = array[array.length - 1 - i];
+        array[array.length - 1 - i] = element; 
+        
+        //Double-check this. 
+        if(array[i] === undefined){
+          delete array[i];
+        }
+      }
+      return array; 
+    }
+ 
+ tests({
+  'It should reverse the positioning of the elements in the array.':function(){
+    var testArray = [1,2,3,4];
+    var resultOfReverse = reverse(testArray);
+    eq(resultOfReverse[0], 4);
+    eq(resultOfReverse[1], 3);
+    eq(resultOfReverse[2], 2);
+    eq(resultOfReverse[3], 1);
+  },
+  'It should modify the original array (mutate).':function(){
+    var testArray = [1,2,3,4];
+    var resultOfReverse = reverse(testArray);
+    eq(testArray[0], 4); 
+    eq(testArray === resultOfReverse, true); 
+  },
+  // Double-check this one
+  'It should delete holes.':function(){
+    var testArray = [1,2,,];
+    var resultOfReverse = reverse(testArray); 
+    eq(testArray[0], undefined)
+  },
+
+
+  'It should return an empty array if original array is empty.':function(){
+    var testArray = []; 
+    var resultOfReverse = reverse(testArray);
+    eq(testArray.length, 0);
+  },
+  'It should return the only element if there is just one element in the original array.':function(){
+    var testArray = [1];
+    var resultOfReverse = reverse(testArray);
+    eq(resultOfReverse, 1);
+  },
+
+
+  "It should be possible to 'call' reverse() with objects resembling arrays.":function(){
+    var arrayLikeObject =  {0: 1, 1: 2, 2: 3, length: 3};
+    var resultOfReverse = Array.prototype.reverse.call(arrayLikeObject);
+    eq(arrayLikeObject[0], 3);
+    eq(arrayLikeObject[1], 2);
+    eq(arrayLikeObject[2], 1);
+    eq(arrayLikeObject.length, 3);
+  },
+  "It should be possible to 'apply' reverse() to objects resembling arrays.":function(){
+    var arrayLikeObject =  {0: 1, 1: 2, 2: 3, length: 3};
+    var resultOfReverse = Array.prototype.reverse.apply(arrayLikeObject);
+    eq(arrayLikeObject[0], 3);
+    eq(arrayLikeObject[1], 2);
+    eq(arrayLikeObject[2], 1);
+    eq(arrayLikeObject.length, 3); 
+  },
+
+
+  'It should work with booleans.':function(){
+    var testArray = [1, true];
+    var resultOfReverse = reverse(testArray);
+    eq(resultOfReverse[0], true);
+  },
+  'It should work with null.':function(){
+    var testArray = [1, null];
+    var resultOfReverse = reverse(testArray);
+    eq(resultOfReverse[0], null);
+  },
+  'It should work with undefined.':function(){
+    var testArray = [1, undefined];
+    var resultOfReverse = reverse(testArray);
+    eq(resultOfReverse[0], undefined);
+  }
+  })
+</script> 

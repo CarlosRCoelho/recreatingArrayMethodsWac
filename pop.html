@@ -1,0 +1,157 @@
+<script src="../simpletest.js"></script>
+<script>
+  // General description
+    // The pop method removes the last element from an array. 
+    // It returns the element that has been popped. 
+    // This method changes the length of the array. 
+
+  // Prototype 
+    // function pop(originalArray){
+    //    lastElementIndex = originalArray-lenght - 1; 
+    //    for (var i = 0; i < originalArray.length; i++){
+    //      if(i === lastElementIndex){
+    //        delete originalArray[i];
+    //      }
+    //    }
+    //    
+    // }
+  
+  // Parameters 
+    // NOPE.
+
+  // Function Signature 
+    // arrName.pop() 
+    // function pop(array)
+
+  // Return value 
+    // The removed element from the array. 
+    // Undefined if the array is empty. 
+
+  // Requirements 
+    // It should remove the last element of the array.
+    // It should return the element removed.
+    // It should return 'undefined', if the original array is empty. 
+
+    // If the last element is an empty index, it should remove it anyways. 
+    // If the last element is an empty index, it should return undefined. 
+
+    // It should change the length of the original array. 
+    // It should be possible to used it on objects resembling arrays.
+
+    // It should function when using call().
+    // It should function when using apply(). 
+
+    // If object.length does not exist, object.length === 0. 
+
+    // It should throw a TypeError when called on a string. 
+    // It should throw a TypeError when called on null. 
+    // It should throw a TypeError when called on undefined. 
+
+    function pop(originalArray){
+
+      if(typeof originalArray === 'string' || typeof originalArray === null || typeof originalArray === undefined){
+        throw new TypeError("");
+      }
+
+      var lastElementIndex = originalArray.length - 1; 
+
+      if(originalArray.length === 0){
+        return undefined; 
+      }
+      
+      for (var i = 0; i < originalArray.length; i++){
+        if(i === lastElementIndex){
+          var poppedElement = originalArray[i];
+          delete poppedElement;
+          originalArray.length--;
+          return poppedElement;
+        }
+      }
+      
+    
+    }
+
+  tests({
+    'It should remove the last element of the array.':function(){
+      testArray = [1,2,3];
+      pop(testArray);
+      eq(testArray.length, 2);
+      eq(testArray[0], 1);
+      eq(testArray[1], 2);
+    },
+    'It should return the element removed.':function(){
+      var testArray = [1,2,3];
+      var resultOfPop = pop(testArray);
+      eq(resultOfPop, 3);
+    },
+    "It should return 'undefined', if the original array is empty.":function(){
+      var resultOfPop = pop([]);
+      eq(resultOfPop, undefined);
+    },
+
+
+    'If the last element is an empty index, it should remove it anyways.':function(){
+      var testArray = [1,2,,];
+      var resultOfPop = pop(testArray);
+      eq(testArray.length, 2);
+    },
+    'If the last element is an empty index, it should return undefined.':function(){
+      var testArray = [1,2,,];
+      var resultOfPop = pop(testArray);
+      eq(resultOfPop, undefined);
+    },
+
+
+    'It should change the length of the original array.':function(){
+      var testArray = [1,2,3];
+      var resultOfPop = pop(testArray);
+      eq(testArray.length, 2);
+    },
+
+    '**It should function when using call().':function(){
+      // Does this make sense? 
+      var array = [0, 1];
+      var resultOfPop = array.pop.call(array);
+      eq(array[0], 0);
+      eq(array.length, 1);
+      eq(resultOfPop, 1);
+    },
+    '**It should function when using apply().':function(){
+      // Does this makes sense? 
+      var array = [0, 1];
+      var resultOfPop = array.pop.apply(array);
+      eq(array[0], 0);
+      eq(array.length, 1);
+      eq(resultOfPop, 1);
+    },
+
+    'It should throw a TypeError when called on a string.':function(){
+      var isTypeError = false; 
+      try {
+        pop('string')
+      } catch (error) {
+        isTypeError = error instanceof TypeError;
+      }
+      eq(isTypeError, true);
+    },
+    'It should throw a TypeError when called on null.':function(){
+      var isTypeError = false; 
+      try {
+        pop(null)
+      } catch (error) {
+        isTypeError = error instanceof TypeError;
+      }
+      eq(isTypeError, true);
+    },
+    'It should throw a TypeError when called on undefined.':function(){
+      var isTypeError = false; 
+      try {
+        pop(undefined)
+      } catch (error) {
+        isTypeError = error instanceof TypeError;
+      }
+      eq(isTypeError, true);
+    }
+  })
+    
+</script> 

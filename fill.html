@@ -1,0 +1,202 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// General description 
+  // The fill() method changes all the elements in an array to a static value.
+  // It returns the modified array. 
+
+// Protoype 
+  // function fill(array, value [, start[, end]])
+    // for(var i = 0; i < array.length; i++){
+    //  array[i] = value; 
+    // }
+
+// Function Signature 
+  // arr.fill(value[, start[, end]]);
+  // fill(array, value[, start[, end]]);
+
+// Parameters 
+  // value --> Value to fill all the elements with. 
+  // [start] --> indicates the index where to start the filling (including).
+  // [end] --> indicates the index where the filling stops (not including). 
+
+// Return Value 
+  // The modified array, filled with value.
+
+// Requirements 
+  
+  // It should return undefined array.length times if theres no fillingValue. 
+  // It should change all the items in array to === fillingValue. 
+  // It should modify the original array. 
+  // It should return the original array filled with fillingValue. 
+
+  // It should 'startIndex === 0' if start doesn't exist. 
+  // It should 'endIndex === array.length' if end doesn't exist. 
+
+  // It should treat startIndex as the index where to start the filling. 
+  // It should treat endIndex as the index where to end the filling (not including). 
+
+  // If startIndex is negative, it should be treated as array.length + start.
+  // If endIndex is negative, it should be treated as array.length + end.
+
+  // If 'value' is an object, each slot in the array will reference that object. 
+
+  // If array is not an array throw a TypeError
+
+  function fill(originalArray, fillingValue, startIndex, endIndex){
+  
+    if(Array.isArray(originalArray) == false){
+        throw new TypeError;
+    }
+  // If there is just the originalArray 
+    if(arguments.length === 1){
+      for(var i = 0; i < originalArray.length; i++){
+        originalArray[i] = undefined;
+      }
+      return originalArray;
+    }
+
+    if(arguments.length === 2){
+      startIndex = 0; 
+    }
+
+    if(arguments.length === 3){
+      endIndex = 0; 
+    }
+
+    if(startIndex < 0){
+      startIndex = originalArray.length + startIndex; 
+    }
+
+    if(endIndex < 0){
+      endIndex = originalArray.length + endIndex;
+    }
+
+  // If there is originalArray, fillingValue and startIndex
+    if(arguments.length === 3){
+      for(var i = startIndex; i < originalArray.length; i++){
+      originalArray[i] = fillingValue; 
+      }
+    return originalArray;
+    }
+
+  // If there is originalArray, fillingValue, startIndex and endIndex; 
+    if(arguments.length === 4){
+      for(var i = startIndex; i < endIndex; i++){
+      originalArray[i] = fillingValue; 
+      }
+    return originalArray;
+    }
+
+  // If there is just the orignalArray and fillingValue. 
+    for(var i = 0; i < originalArray.length; i++){
+      originalArray[i] = fillingValue; 
+    }
+    return originalArray;
+  }
+
+  tests({
+    'It should return undefined array.length times if theres no fillingValue. ':function(){
+      var testArray = [1,2,3];
+      var resultOfFill = fill(testArray)
+      eq(resultOfFill[0], undefined);
+      eq(resultOfFill[1], undefined);
+      eq(resultOfFill[2], undefined);
+    },
+    'It should change all the items in array to === fillingValue.':function(){
+      var testArray = [1,2,3];
+      var fillValue = 0; 
+      var resultOfFill = fill(testArray, fillValue);
+      eq(resultOfFill[0], fillValue);
+      eq(resultOfFill[1], fillValue);
+      eq(resultOfFill[2], fillValue);
+    },
+    'It should modify the original array.':function(){
+      var testArray = [1,2,3];
+      var fillValue = 0; 
+      var resultOfFill = fill(testArray, fillValue);
+      eq(testArray[0], 0);
+      eq(testArray[1], 0);
+      eq(testArray[2], 0);
+    },
+/*     'It should return the original array filled with fillingValue.':function(){
+
+    }, */
+
+
+    "It should 'startIndex === 0' if start doesn't exist.":function(){
+      var testArray = [1,2,3];
+      var fillValue = 0; 
+      var resultOfFill = fill(testArray, fillValue);
+      eq(testArray[0], 0);
+    },
+    "It should 'endIndex === array.length' if end doesn't exist.":function(){
+      var testArray = [1,2,3];
+      var fillValue = 0;  
+      var startIndex = 0; 
+      var resultOfFill = fill(testArray, fillValue, startIndex);
+      eq(testArray[2], 0);
+    },
+
+
+    'It should treat startIndex as the index where to start the filling.':function(){
+      var testArray = [1,2,3];
+      var fillValue = 0;  
+      var startIndex = 1; 
+      var resultOfFill = fill(testArray, fillValue, startIndex);
+      eq(resultOfFill[0], 1);
+      eq(resultOfFill[1], 0);
+      eq(resultOfFill[2], 0);
+    },
+    'It should treat endIndex as the index where to end the filling (not including).':function(){
+      var testArray = [1,2,3,4];
+      var fillValue = 0;  
+      var startIndex = 0; 
+      var endIndex = 2; 
+      var resultOfFill = fill(testArray, fillValue, startIndex, endIndex);
+      eq(resultOfFill[0], 0);
+      eq(resultOfFill[1], 0);
+      eq(resultOfFill[2], 3);
+      eq(resultOfFill[3], 4);
+    },
+
+    'If startIndex is negative, it should be treated as array.length + start.':function(){
+      var testArray = [1,2,3];
+      var fillValue = 0;  
+      var startIndex = -1; 
+      var resultOfFill = fill(testArray, fillValue, startIndex); 
+      eq(resultOfFill[0], 1);
+      eq(resultOfFill[1], 2);
+      eq(resultOfFill[2], 0);
+    },
+    'If endIndex is negative, it should be treated as array.length + end.':function(){
+      var testArray = [1,2,3];
+      var fillValue = 0;  
+      var startIndex = 0; 
+      var endIndex = -1;
+      var resultOfFill = fill(testArray, fillValue, startIndex, endIndex); 
+      eq(resultOfFill[0], 0);
+      eq(resultOfFill[1], 0);
+      eq(resultOfFill[2], 3);
+    },
+
+
+/*     "If fillingValue is an object, each slot in the array will reference that object.":function(){
+      var testArray = [1,2,3];
+      var fillValue = {};
+      var resultOfFill = fill(testArray, fillValue);
+    }, */
+
+
+    'If array is not an array throw a TypeError':function(){
+      var isTypeError = false; 
+      try {
+        fill('string')
+      } catch (error) {
+        isTypeError = error instanceof TypeError; 
+      }
+
+      eq(isTypeError, true);
+      }
+  })
+</script> 

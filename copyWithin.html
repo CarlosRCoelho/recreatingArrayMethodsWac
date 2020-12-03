@@ -1,0 +1,225 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description 
+    // The copyWithin() shallow copies part of an array `
+    // to anoter location in the same array. 
+    
+    // It returns the modified array 
+    // It doesn't change the array.length 
+
+  // Function signature 
+    // arr.copyWithin(target[, start[, end]])
+    // function copyWithin(array, target [, startIndex[, endIndex]])
+
+  // Parameters 
+    
+    // target
+      // Index at which to copy the sequence to. 
+      // If negative will be counted from the end. 
+      // If target > array.length nothing will be copied. 
+      // **If target is postioned after start the copied sequence will be trimmed to fi array.length.
+
+    // [startIndex]
+      // Index at which to start copying 
+      // If negative will be counted from the end. 
+      // If startIndex doesn't exist = 0; 
+
+    // [endIndex]
+      // Index at which to end copying elements from. 
+      // It copies until endIndex but NOT including. 
+      // If negative will be counted from the end. 
+      // If endIndex doesn't exist = array.length 
+
+  // Return Value 
+    // The MODIFIED array. 
+
+  // Specifications: 
+    // ---- 
+
+  // Requirements: 
+    // It should be able to copy a part of the array and paste it on the same array. 
+    // It should modify the original array. 
+    // It should NOT change the length of the original array. 
+    
+    // It should use target to indicate where to start to paste the copy. 
+    // If target is negative, it should be counted from the end. 
+    // If target > array.length, nothing will be copied 
+      // (the array will stay the same). 
+
+    // It should use [startIndex] to indicate the index where it should start copying. 
+    // If [startIndex] is negative, it should be counted from the end. 
+    // If [startIndex] doesn't exist it will be = 0. 
+      // (copyWithin start to copy from index 0). 
+
+    // It should use [endIndex] to indicate the element where it should stop the copying. 
+      // (it copies until endIndex but not including it)
+    // If [endIndex] is negative it will be counted from the end. 
+    // If endIndex doesn't exist it will be = array.length. 
+
+    // ----------------------------------
+
+    function copyWithin(array, target, startIndex, endIndex){
+
+      var newArray = []; 
+      for(var i = 0; i < array.length; i++){
+        newArray[i] = array[i]; 
+      }
+
+      // If target is negative 
+      if(target < 0){
+        target = array.length + target; 
+      }
+
+      // If startIndex is negative. 
+      if(startIndex < 0){
+          startIndex = array.length + startIndex; 
+      }
+
+       // If endIndex is negative. 
+       if(endIndex < 0){
+            endIndex = array.length + endIndex; 
+       }
+
+      //If startIndex.   
+        if(arguments.length === 3){
+
+          for(var i = target; i < array.length; i++){
+          array[i] = newArray[startIndex];
+          if(startIndex !== array.length - 1){
+            startIndex++;
+          }
+          }
+          return array; 
+        }
+      
+      //If endIndex. 
+        if(arguments.length === 4){
+
+          for(var i = target; i < array.length; i++){
+            if (i > endIndex){
+              return array; 
+            }
+            array[i] = newArray[startIndex];
+            startIndex++;
+          }
+          return array;
+        }
+
+      // If there is just array and target. 
+      var firstIndex = 0
+
+      for(var i = target; i < array.length; i++){       
+        array[i] = newArray[firstIndex];
+        firstIndex++; 
+      }
+
+      return array; 
+    }
+
+
+tests({
+
+  'It should be able to copy a part of the array and paste it on the same array.':function(){
+    var testArray = [1,2,3,4]; 
+    var resultOfCopyWithin = copyWithin(testArray, 2);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 1);
+    eq(resultOfCopyWithin[3], 2);
+  },
+  'It should modify the original array.':function(){
+    var testArray = [1,2,3,4];
+    var resultOfCopyWithin = copyWithin(testArray, 2);
+    eq(testArray[2], 1);
+    eq(testArray[3], 2);
+  },
+  'It should NOT change the length of the original array.':function(){
+    var testArray = [1,2,3,4];
+    var resultOfCopyWithin = copyWithin(testArray, 2);
+    eq(testArray.length, 4);
+  },
+
+
+  'It should use target to indicate where to start to paste the copy.':function(){
+    var testArray = [1,2,3,4]; 
+    var target = 3;
+    var resultOfCopyWithin = copyWithin(testArray, target);
+    eq(resultOfCopyWithin[3], 1);
+  },
+  'If target is negative, it should be counted from the end.':function(){
+    var testArray = [1,2,3,4]; 
+    var target = -1;
+    var resultOfCopyWithin = copyWithin(testArray, target);
+    eq(resultOfCopyWithin[3], 1); 
+  },
+  'If target > array.length, nothing will be copied.':function(){
+    var testArray = [1,2,3,4]; 
+    var target = 10;
+    var resultOfCopyWithin = copyWithin(testArray, target);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 3);
+    eq(resultOfCopyWithin[3], 4);
+  },
+
+
+  'It should use [startIndex] to indicate the index where it should start copying.':function(){
+    var testArray = [1,2,3,4]; 
+    var target = 2;
+    var startIndex = 3;
+    var resultOfCopyWithin = copyWithin(testArray, target, startIndex);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 4);
+    eq(resultOfCopyWithin[3], 4);
+  },
+  'If [startIndex] is negative, it should be counted from the end.':function(){
+    var testArray = [1,2,3,4]; 
+    var target = 2;
+    var startIndex = -3;
+    var resultOfCopyWithin = copyWithin(testArray, target, startIndex);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 2);
+    eq(resultOfCopyWithin[3], 3);
+  },
+  "If [startIndex] doesn't exist it will be (figuratively) = 0.":function(){
+    var testArray = [1,2,3,4]; 
+    var target = 2;
+    var resultOfCopyWithin = copyWithin(testArray, target); //There's no [startIndex]
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 1);
+    eq(resultOfCopyWithin[3], 2);
+  },
+
+
+  'It should use [endIndex] to indicate the element where it should stop the copying.':function(){
+    var testArray = [1,2,3,4]; 
+    var resultOfCopyWithin = copyWithin(testArray, 2, 1, 2);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 2);
+    eq(resultOfCopyWithin[3], 4);
+  },
+  'If [endIndex] is negative it will be counted from the end.':function(){
+    var testArray = [1,2,3,4]; 
+    var resultOfCopyWithin = copyWithin(testArray, 2, 1, -2);
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 2);
+    eq(resultOfCopyWithin[3], 4);
+  },
+  "If endIndex doesn't exist it will be = array.length.":function(){
+    var testArray = [1,2,3,4]; 
+    var resultOfCopyWithin = copyWithin(testArray, 2, 1); 
+    eq(resultOfCopyWithin[0], 1);
+    eq(resultOfCopyWithin[1], 2);
+    eq(resultOfCopyWithin[2], 2);
+    eq(resultOfCopyWithin[3], 3);
+  }
+})
+
+
+</script>

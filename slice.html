@@ -1,0 +1,237 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General Description: 
+    // The slice returns a shallow copy of a portion of an array. 
+    // Slice can have a start and end parameters 
+      // start and end represent the beggining and end of that portion 
+      // end it's not included
+    // The original array is not modified 
+
+  // Prototype 
+    // slice(originalArray, start, end){
+    //   var slicedArray = [];
+    //   for(var i = start; i < end; i++){
+    //     slicedArray.push(originalArray[i]);
+    //   }
+    //   return slicedArray; 
+    // }
+
+  // Function signature: 
+    // arr.slice([start[, end]])
+    // slice(originalArray, startIndex, endIndex)
+
+  // Parameters: 
+      // [start] (where to start slicing)
+      // [end] (where to finish slicing, not including)
+
+  // Return value 
+      // A new array (a slice of the originalArray)
+
+  // Requirements 
+
+      // It should return an array.
+      // It should return a new array.
+      // It should return a slice of the originalArray. 
+      // It should return the an unsliced array if startIndex and endIndex are not provided. 
+      
+      // It should use startIndex to point the beggining of the slicing. 
+      // If startIndex is undefined, slice starts from the index 0.
+      // If startIndex is greater than originalArray.length an empty array is returned.
+      // If startIndex is equal to originalArray.length an empty array is returned.
+      // If startIndex is negative it slices counting from the end. 
+          // (e.g. slice([1,2,3,4,5], -2) --> 4,5) 
+      
+      // It should use endIndex to point the end of the extraction.
+      // If endIndex is undefined, slice extrats until the end of originalArray. 
+      // If endIndex is greater than array.length, slice should extract from startIndex until the end of originalArray.  
+      // If endIndex is negative, the value of endIndex indicates an offset from the of the array. 
+          // (e.g. slice([1,2,3,4,5], 1, -2) --> 2,3)
+
+      // It should not alter the originalArray 
+      // If sliced is called on an object, both originalArray and new array refer to the same object. 
+      // *If a object changes, the changes are visible to both the new and original arrays.
+      // If a primitive value it's changed in one array it does not affect the other array.
+      // If a new element is added to either array, the other array is not affected.
+  
+
+      function slice(originalArray, startIndex, endIndex) {
+
+        // If there is just orginalArray.
+        if(arguments.length < 2){
+          var unslicedArray = [];
+          for(var i = 0; i < originalArray.length; i++){
+            unslicedArray.push(originalArray[i]);
+          }
+          return unslicedArray;
+        }
+
+        // If there is just originalArray and start. 
+        if (arguments.length < 3){
+          var slicedArray = [];
+          // If start is negative. 
+          if(startIndex < 0){
+            startIndex = originalArray.length - startIndex*-1
+            for(var i = startIndex; i < originalArray.length; i++){
+              slicedArray.push(originalArray[i]);
+            }
+            return slicedArray; 
+          }
+          for(var i = startIndex; i < originalArray.length; i++){
+            slicedArray.push(originalArray[i]);
+          }
+          return slicedArray;
+        }
+      
+        // If there are originalArray, start and end values.
+        var slicedArray = [];
+        if(endIndex > originalArray.length){
+          for(var i = startIndex; i < originalArray.length; i++){
+            slicedArray.push(originalArray[i]);
+          }
+          return slicedArray;
+        }
+
+        if (endIndex < 0){
+          endIndex = originalArray.length - endIndex*-1
+          for(var i = startIndex; i < endIndex; i++){
+            slicedArray.push(originalArray[i]);
+          }
+          return slicedArray;
+        }
+    
+        for(var i = startIndex; i < endIndex; i++){
+          slicedArray.push(originalArray[i]);
+        }
+        return slicedArray;
+      };
+
+
+  tests({
+
+    'It should return an array.':function(){
+      resultOfSlice = slice([1,2,3]);
+      eq(Array.isArray(resultOfSlice), true);
+    },
+    'It should return a new array.':function(){
+      var testArray = [1,2,3];
+      resultOfSlice = slice(testArray);
+      eq(resultOfSlice === testArray, false); 
+    },
+    'It should return a slice of the originalArray.':function(){
+      resultOfSlice = slice([1,2,3], 1, 2);
+      eq(resultOfSlice.length, 1);
+      eq(resultOfSlice[0], 2);
+    },
+    // Similar to 6th test.
+    'It should return the an unsliced array if startIndex and endIndex are not provided.':function(){
+      resultOfSlice = slice([1,2,3]);
+      eq(resultOfSlice.length, 3);
+      eq(resultOfSlice[0], 1);
+      eq(resultOfSlice[1], 2);
+      eq(resultOfSlice[2], 3);
+    },
+
+    'It should use startIndex to point the beggining of the slicing.':function(){
+      resultOfSlice = slice([1,2,3], 1);
+      eq(resultOfSlice.length, 2);
+      eq(resultOfSlice[0], 2);
+      eq(resultOfSlice[1], 3);
+    },
+    // Similar to 4th test.
+    'If startIndex is undefined, slice starts from the index 0.':function(){
+      resultOfSlice = slice([1,2,3]);
+      eq(resultOfSlice.length, 3);
+      eq(resultOfSlice[0], 1);
+      eq(resultOfSlice[1], 2);
+      eq(resultOfSlice[2], 3);;
+    },
+    'If startIndex is greater than originalArray.length an empty array is returned.':function(){
+      // startIndex = 5
+      // array.length = 3
+      resultOfSlice = slice([1,2,3], 5);
+      eq(Array.isArray(resultOfSlice), true);
+      eq(resultOfSlice.length, 0);
+    },
+    'If startIndex is equal to originalArray.length an empty array is returned.':function(){
+      // startIndex = 3
+      // array.length = 3
+      resultOfSlice = slice([1,2,3], 3);
+      eq(Array.isArray(resultOfSlice), true);
+      eq(resultOfSlice.length, 0);
+    },
+    'If startIndex is negative it slices counting from the end.':function(){
+      // (e.g. slice([1,2,3,4,5], -2) --> 4,5);
+      resultOfSlice = slice([1,2,3,4,5], -2);
+      eq(resultOfSlice.length, 2);
+      eq(resultOfSlice[0], 4);
+      eq(resultOfSlice[1], 5);
+
+    },
+
+
+    'It should use endIndex to point the end of the extraction.':function(){
+      resultOfSlice = slice([1,2,3,4,5], 2, 4); 
+      eq(resultOfSlice.length, 2);
+      eq(resultOfSlice[0], 3);
+      eq(resultOfSlice[1], 4);
+    },
+    'If endIndex is undefined, slice extrats until the end of originalArray.':function(){
+      resultOfSlice = slice([1,2,3], 1);
+      eq(resultOfSlice.length, 2);
+      eq(resultOfSlice[0], 2);
+      eq(resultOfSlice[1], 3);
+
+    },
+    'If endIndex is greater than array.length, slice should extract from startIndex until the end of originalArray.':function(){
+      // endIndex = 5 
+      // array.length = 3 
+      resultOfSlice = slice([1,2,3], 0, 5);
+      eq(resultOfSlice.length, 3);
+    },
+    'If endIndex is negative, the value of endIndex indicates an offset from the end of the array.':function(){
+      resultOfSlice = slice([1,2,3], 0, -1);
+      eq(resultOfSlice.length, 2)
+      eq(resultOfSlice[0], 1);
+      eq(resultOfSlice[1], 2);
+    },
+
+
+    'It should not alter the originalArray.':function(){
+      testArray = [1,2,3];
+      resultOfSlice = slice(testArray, 1, 2); // [2]
+      eq(testArray.length, 3)
+    },
+    'It should copy the object references into the resultOfSlice':function(){
+      var testObject = {property: 'value'}; // an object with a property and a value defined. 
+      var testArray = [1, 2, testObject, 4]; // an array containing that object.
+      var resultOfSlice = slice(testArray, 2, 3); // slice being called on testArray.
+      // resultOfSlice = [testObject]
+      eq(resultOfSlice[0].property, 'value'); // value of the property in first object copied to final result.
+    },
+    'If a object refernce changes, the changes are visible to both the new and original arrays.':function(){
+      // !!!!!!!!!!!
+      var testObject = {nameOfProperty: 'value'}; // an object with a property and a value defined
+      var testArray = [1, testObject, 3]; // an array containing that object. 
+      var resultOfSlice = slice(testArray, 1, 2); // slice being called on testArray.
+     // resultOfSlice = [testObject];
+      testObject.nameOfProperty = 'new value'; // changing the value the object inside testArray. 
+      eq(resultOfSlice[0].nameOfProperty, 'new value'); // change is visible to the final result. 
+    },
+    'If a primitive value it is changed in one array it does not affect the other array.':function(){
+      var testArray = [1,2,3];
+      var resultOfSlice = slice(testArray, 4, 5);
+      resultOfSlice[0] = 6;
+      eq(testArray[0], 1);
+      
+    },
+    'If a new element is added to either array, the other array is not affected.':function(){
+      // !!!!!!!!
+      var testArray = [1,2,3];
+      var resultOfSlice = slice(testArray, 0, 10);
+      resultOfSlice.push('new value');
+      eq(testArray.length, 3);
+    }
+
+  })
+</script>

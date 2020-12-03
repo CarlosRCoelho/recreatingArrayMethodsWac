@@ -1,0 +1,283 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // General description: 
+    // The splice() method changes the contents of an array 
+    // by removing or replacing existing elements 
+    // OR 
+    // by adding new elements in place
+
+  // Function signature
+    
+    // array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+    
+    // function splice(array, start[, deleteCount[, item1[, item2[, ...]]]])
+
+ 
+  // Parameters 
+
+    // start --> The index at which to start changing the array.
+      // If start > array.length, start is equal to array.length. 
+      // If start > array.length, no elements are deleted. 
+      // If start > array.length, splice should add as many elements provided as [items].
+      // If start < 0, start = array.length + start.
+      // If array.length + start < 0, start is equal to 0.
+
+    // [deleteCount] --> An intenger indicating the number of elements in the array to remove from start. 
+      // If (!deleteCount) all elements from start to the end of the array will be deleted. 
+      // If deleteCount is => array.length - start, then all elements left in the array will be deleted. 
+          // (e.g. --> [1,2,3,4].splice(0,10) --> resultOfSplice = [1,2,3,4])
+      // If deleteCount < 0, no elements are removed. 
+
+    // [item1, item2, ...] --> The elements to add to the array, beggining from start. 
+      // If there's no [items], splice will only remove elements from the array. 
+
+  // Return value 
+    // An array containing the deleted elements. 
+    // If no elements are removed, an empty array is returned. 
+
+
+  // Requirements 
+
+    // If there's just indexStart, splice() will remove elements counting from indexStart. 
+    // If indexStart > array.length, start is equal to array.length.
+    // If indexStart > array.length, no elements are deleted. 
+    // If indexStart > array.length, splice should add as many elements provided as [items].      
+    // If start < 0, start = array.length + start.
+    // If array.length + indexStart < 0, indexStart is equal to 0.
+
+    // It should indicate how many elements to remove starting at indexStart. 
+    // If (!deleteCount) all elements from start to the end of the array will be deleted. 
+    // If deleteCount is => array.length - start, then all elements left in the array will be deleted.
+      // (e.g. --> [1,2,3,4].splice(0,10) --> resultOfSplice = [1,2,3,4])
+    // If deleteCount < 0, no elements are removed. 
+
+    // If the [itemsN] to insert > deleteCount, length will be changed.  
+
+    // It should change the originalArray. 
+ 
+    // It should return an array containing the deleted elements. 
+    // It should return an empty array, if no elements are deleted.
+
+    // If array (first argument) is of typeof number it should return SyntaxError. 
+    // If array (first argument) is of typeof Bollean || String it should return TypeError. 
+
+    function splice(array, indexStart, deleteCount){
+
+      if (typeof array === "number"){
+        throw new SyntaxError ('Invalid or unexpected token');
+      }
+
+      if (typeof array === "boolean"){
+        throw new TypeError; 
+      }
+      
+      var lastIndex = array.length - 1; 
+      var removedItemsArray = []; 
+
+
+        if(indexStart > array.length){
+          indexStart = array.length;
+        }
+
+        if(array.length + indexStart < 0){
+          indexStart = 0; 
+        }
+      
+        if(indexStart < 0){
+          indexStart = array.length + indexStart;
+        }
+
+        // splice(array, indexStart)
+        if(arguments.length === 2){
+          for(var i = indexStart; i <= lastIndex; i++){
+            removedItemsArray.push(array[i]);
+            delete array[i];
+          }
+        }
+        
+
+        // splice(array, indexStart, deleteCount)
+        if(arguments.length === 3){
+         
+          if(deleteCount >= array.length - indexStart){ // splice([1,2,3], 1, 5)
+            for(var i = indexStart; i < array.length; i++){
+              removedItemsArray.push(array[i]);
+              delete array[i];
+            }
+            return removedItemsArray;
+          }
+        
+          for(var i = indexStart; i < indexStart + deleteCount; i++){
+            removedItemsArray.push(array[i]);
+            delete array[i];
+          }
+        }
+
+        // Adding itemsN 
+        if(arguments.length > 3){
+
+          // Deletes if necessary 
+          for(i = indexStart; i < indexStart + deleteCount; i++){
+            removedItemsArray.push(array[i]);
+            delete array[i];
+
+          }
+
+          var indexOfExtraElement = 3;
+
+          for(i = 0; i < arguments.length - 3; i++){
+            array[indexStart] = arguments[indexOfExtraElement];
+            indexOfExtraElement++;  
+            indexStart++
+          } 
+        }
+
+        return removedItemsArray;
+    }
+
+
+
+  tests ({
+
+    "If there's just indexStart (two arguments), splice() will remove elements counting from indexStart.":function(){
+      var testArray = [1,2,3]
+      var resultOfSplice = splice(testArray, 1);
+      eq(resultOfSplice[0], 2);
+      eq(resultOfSplice[1], 3);
+    },
+/*     'If indexStart > array.length, start is equal to array.length.':function(){
+      // This works in the function but didn't find a way to test it. 
+      var testArray = [1,2,3]; 
+      indexStart = 5; 
+      var resultOfSplice = splice(testArray, indexStart); 
+      console.log(indexStart);
+      eq(indexStart, 3);
+    }, */
+    'If indexStart > array.length, no elements are deleted.':function(){
+      var testArray = [1,2,3]; 
+      indexStart = 5; 
+      var resultOfSplice = splice(testArray, indexStart); 
+      eq(Array.isArray(resultOfSplice), true);
+      eq(resultOfSplice.length, 0);
+    },
+    'If indexStart > array.length, splice should add as many elements provided as [items].':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 5; 
+      var deleteCount = 0; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount, "fourth element", "fifth element"); 
+      eq(testArray.length, 5);
+    },
+    'If start < 0, start = array.length + start (it starts to count from the end).':function(){
+      var testArray = [1,2,3]; 
+      indexStart = -2; 
+      var resultOfSplice = splice(testArray, indexStart);
+      eq(resultOfSplice[0], 2);
+      eq(resultOfSplice[1], 3);
+    },
+    'If array.length + indexStart < 0, indexStart is equal to 0 (all elements will be deleted).':function(){
+      var testArray = [1,2,3]; 
+      indexStart = -10; 
+      var resultOfSplice = splice(testArray, indexStart);
+      eq(resultOfSplice[0], 1);
+      eq(resultOfSplice[1], 2);
+      eq(resultOfSplice[2], 3);
+    },
+
+
+    'If deleteCount, it should indicate how many elements to remove starting at indexStart.':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 0; 
+      var deleteCount = 1; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount);
+      eq(resultOfSplice[0], 1);
+      eq(resultOfSplice.length, 1);
+    },
+    'If (!deleteCount) all elements from indexStart to the end of the array will be deleted.':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 1; 
+      var resultOfSplice = splice(testArray, indexStart);
+      eq(resultOfSplice.length, 2);
+      eq(resultOfSplice[0], 2);
+      eq(resultOfSplice[1], 3);
+    },
+    'If deleteCount is => array.length - start, then all elements left in the array will be deleted.':function(){
+      var testArray = [1,2,3];
+      var resultOfSplice = splice(testArray, 1, 10);
+      eq(resultOfSplice.length, 2);
+      eq(resultOfSplice[0], 2);
+      eq(resultOfSplice[1], 3);
+    },
+    'If deleteCount <= 0, no elements are removed.':function(){
+      var testArray = [1,2,3];
+      var indexStart = 2; 
+      var deleteCount = 0; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount);
+      eq(Array.isArray(resultOfSplice), true); 
+      eq(resultOfSplice.length, 0);
+    },
+
+
+    'If the [itemsN] to insert > deleteCount, length will be changed.':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 3; 
+      var deleteCount = 0; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount, "another element")
+      eq(testArray.length, 4); 
+      eq(resultOfSplice.length, 0); 
+    },
+
+
+    'It should change the originalArray.':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 3; 
+      var deleteCount = 0; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount, "another element")
+      eq(testArray.length, 4);
+      eq(testArray[0], 1);
+      eq(testArray[1], 2);
+      eq(testArray[2], 3);
+      eq(testArray[3], "another element");
+    },
+
+
+    'It should return an array containing the deleted elements.':function(){
+      var testArray = [1,2,3]; 
+      var indexStart = 0; 
+      var deleteCount = 1; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount);
+      eq(Array.isArray(resultOfSplice), true);
+      eq(resultOfSplice.length, 1);
+      eq(resultOfSplice[0], 1);
+    },
+    'It should return an empty array, if no elements are deleted.':function(){
+      var testArray = [1,2,3];
+      var indexStart = 6; 
+      var deleteCount = -3; 
+      var resultOfSplice = splice(testArray, indexStart, deleteCount);
+      eq(Array.isArray(resultOfSplice), true); 
+      eq(resultOfSplice.length, 0)
+    },
+
+
+    'If array (first argument) is of typeof number it should return SyntaxError.':function(){
+      var isSyntaxError = false; 
+      try{
+        splice(123);
+      } catch(e) {
+        var isSyntaxError = e instanceof SyntaxError;
+      }
+      eq(isSyntaxError, true);
+    },
+    'If array (first argument) is of typeof Bollean || String it should return TypeError.':function(){
+      var isTypeError = false; 
+      try{
+        splice(true)
+      } catch(e) {
+        var isTypeError = e instanceof TypeError;
+      }
+      eq(isTypeError, true)
+    }
+  })
+
+</script> 

@@ -1,0 +1,159 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // First thought 
+    // It's like push - but at the beggining
+  
+  // General description
+    // The unshift method adds one or more elements to the beggining of the array 
+    // It retuns the new length of the array 
+
+  // Function Signature 
+    // arr.unshift(element1[, ...[, elementN]])
+    // unshift(array, element1[, ...[, elementN]])
+  
+  // Parameters 
+    // elementN --> The elements to add to the front of the array. 
+
+  // Return value 
+    // The new length of the array. 
+
+  // Prototype
+
+    // function unshift(array){
+    // 
+    //    if(arguements > 1){
+    //      var chunkOfArguments = [];
+    //      for(var i = 0; i < arguments.length; i++){
+    //         chunkOfArguments = chunkOfArguments.concat(arguments[i]);
+    //      }
+    //    }
+    //    var unshiftedArray = chunkOfArguments.concat(array)
+    //    return unshiftedArray.length
+    // }
+
+  // Description/ Requirements: 
+
+    // It should add elements to the beggining of the array. 
+    // It should modify the length of the array.
+    // It should return the length of the modified array.
+    // It should return just the array.length if paramters are empty. 
+    
+    // It should work when calling it with apply(). 
+    // It should work when calling it with push(). 
+
+    // It should throw a TypeError when called on a string. 
+    // It should throw a TypeError when called on null. 
+    // It should throw a TypeError when called on undefined.
+
+    //** Please note that, if multiple elements are passed as parameters, 
+    //   they're inserted in chunk at the beginning of the object, 
+    //   in the exact same order they were passed as parameters. 
+    //   Hence, calling unshift with n arguments once, ´
+    //   or calling it n times with 1 argument (with a loop, for example), 
+    //   don't yield the same results.
+
+
+  function unshift(originalArray, elementN){
+
+    if(typeof originalArray === 'string' || typeof originalArray === null || typeof originalArray === undefined){
+        throw new TypeError;
+    }
+    
+    // Returns originalArray.length if there are no parameters. 
+    if(arguments.length === 1){
+      return originalArray.length; 
+    }
+
+
+    var originalArrayLength = originalArray.length;
+    // This adds the elements provided to end of the originalArray.
+    for (var i = 1; i < arguments.length; i++){
+      originalArrayLength = originalArray.push(arguments[i])
+    }
+
+    //It should pass the arguments pushed in order to the beggining of the array.
+    for(var i = 1; i <= arguments.length; i++){
+      originalArray[i-1] = originalArray[originalArrayLength - i];
+    }
+
+    return originalArrayLength; // returns the length --> used push(). 
+  }
+
+tests({
+  
+  'It should add elements to the beggining of the original array':function(){
+    // This adds the provided elements to the END of the array. 
+    var testArray = [1,2,3];
+    unshift(testArray, 0);
+    eq(testArray[0], 0);
+    eq(testArray[1], 1);
+    eq(testArray[2], 2);
+  },
+  'It should modify the length of the array.':function(){
+    var testArray = [1,2,3];
+    unshift(testArray, 0);
+    eq(testArray.length, 4);
+  },
+  'It should return the length of the modified array.':function(){
+    var testArray = [1,2,3];
+    var resultOfUnshift = unshift(testArray, 0);
+    eq(resultOfUnshift, 4);
+  },
+  'It should return just the array.length if parameters are empty.':function(){
+    var testArray = [1,2,3];
+    var resultOfUnshift = unshift(testArray);
+    eq(resultOfUnshift, 3);
+  },
+
+
+  'It should work when calling it with call().':function(){
+    // The logic for unshift doesn't make sense. 
+    var testArray = [0, 1];
+    var resultOfUnshift = testArray.unshift.call(testArray);
+    eq(testArray[0], 1);
+    eq(testArray.length, 1);      
+    eq(resultOfUnshift, 0);
+  },
+  'It should work when calling it with apply().':function(){
+    // The logic for unshift doesn't make sense. 
+    var testArray = [0, 1];
+    var resultOfUnshift = testArray.unshift.apply(testArray);
+    eq(testArray[0], 1);  
+    eq(testArray.length, 1);  
+    eq(resultOfUnshift, 0);
+  },
+
+
+  'It should throw a TypeError when called on a string.':function(){
+    var isTypeError = false; 
+    try {
+      unshift('string')
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  },
+  'It should throw a TypeError when called on null.':function(){
+    var isTypeError = false; 
+    try {
+      unshift(null)
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  },
+  'It should throw a TypeError when called on undefined.':function(){
+    var isTypeError = false; 
+    try {
+      unshift(undefined)
+    } catch (error) {
+      isTypeError = error instanceof TypeError; 
+    }
+
+    eq(isTypeError, true);
+  },
+})
+</script> 

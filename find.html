@@ -1,0 +1,125 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// Prototype implementation: 
+
+  // function find(array, callback, optionalThis){
+  //    for(var i = 0; i < array.length; i++){
+  //        if (callback(array[i], i, array)){
+  //            return array[i]; 
+  //        }; 
+  //    }
+  // }
+
+// Function signature: 
+  // find(array, callback[, optionalThis])
+
+// Parameters: 
+  // Callback
+    // element (array[i])
+    // index (i) 
+    // array 
+  // optionalThis
+
+// Return value: 
+    // The value of the first element that satisfies the provided testing function. 
+    // Undefined, if no element is truthy to the callback.
+
+// Description: 
+
+    // It should execute the callback array.length times. 
+
+    // It should pass in the array element being processed as the 1st argument of the callback. 
+    // It should pass in the array element index being processed as the 2nd argument of the callback. 
+    // It should pass in the actual array being processed as the 3rd argument of the callback.
+
+    // It should permit the callback to have access to the optional *this* object.  
+ 
+    // It should execute the callback on holes. 
+      // (e.g. find([1,,3,,5], function(){}))
+
+    // It should execute the callback until it returns a truthy value.
+    // It should return 'undefined' if no truthy values are found. 
+    // It should execute the callback on element that have been deleted. 
+
+function find(array, callback, optionalThis){
+  
+  if (optionalThis){
+    callback = callback.bind(optionalThis);
+  }
+  for(var i = 0; i < array.length; i++){
+    if (callback(array[i], i, array) === true){
+      return array[i]; 
+    }; 
+  }
+}
+
+tests ({
+  'It should execute the callback array.length times.':function(){
+    var numberOfTimesCallbackHasRun = 0; 
+    find([1, 2, 3], function(){
+      numberOfTimesCallbackHasRun++; 
+    });
+    eq(numberOfTimesCallbackHasRun, 3);
+  },
+  
+  'It should pass in the ith element of the array as the 1st argument of the callback.':function(){
+    find([1], function(element){
+      eq(element, 1); 
+    });
+  },
+  'It should pass in the index of the ith element as the 2nd argument of the callback.':function(){
+    find([1], function(element, index){
+      eq(index, 0); 
+    });
+  },
+  'It should pass in the actual array being processed as the 3rd argument of the callback.':function(){
+    var testArray = [1,,3];
+    find(testArray, function(element, index, originalArray){
+      eq(originalArray, testArray); 
+    });
+  },
+  
+  'It should permit the callback to have access to the optional *this* object.':function(){
+    find([1,2], function(){
+      eq(this.optionalThis, 'I am the value of optionalThis');
+    }, {optionalThis: 'I am the value of optionalThis'});
+  },
+
+  'It should execute the callback on holes.':function(){
+    var numberOfTimesCallbackHasRun = 0;
+    find([1,,3,,5], function(){
+      numberOfTimesCallbackHasRun++;
+    });
+    eq(numberOfTimesCallbackHasRun, 5);
+  },
+
+  //Review this one: 
+  'It should execute the callback until it returns the first truthy value.':function(){
+    var testArray = [1, ,87,22]; 
+    var elementFound = find(testArray, function(element){
+      return element > 3; 
+    });
+    eq(elementFound, 87);
+  },
+  "It should return 'undefined' if no truthy values are found.":function(){
+    var elementFound= find([1, 2], function(element){
+      return element > 3
+    });
+    eq(elementFound, undefined);
+  },
+  'It should visit elements that have been deleted.':function(){
+    var testArray = [1,2,3];
+    var elementFound =  find(testArray, function(element, index){
+      delete testArray[1];
+      eq(testArray.length, 3);
+      return element > 1;
+    })
+    eq(elementFound, 3);
+   
+  
+  }
+
+  // callback will not visit any elements added to the array after the call to find begins.
+})
+</script>

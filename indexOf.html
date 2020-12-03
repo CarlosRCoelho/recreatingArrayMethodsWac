@@ -1,0 +1,153 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// General description: 
+  // The indefOf() method returns the first index at which an 
+  // element of our choice can be found in the array, 
+  // or -1 if it is not present. 
+
+// Prototype: 
+  // function indexOf (originalArray, searchElement){
+  //  for (var i = 0, i < originalArray.length, i++){
+  //    if (originalArray[i] === searchElement){
+  //      return serachElement[i]
+  //    } else {
+  //      return -1; 
+  //    }
+  //   }
+  // }
+
+// Function signature: 
+    // arr.indexOf(searchElement[, fromIndex])
+    // indexOf(array, searchElement[, fromIndex])
+
+// Parameters: 
+    // searchElement --> (element to be searched)
+    // [fromIndex] --> (The index to start the search at)
+
+// Return value 
+    // The first index of the element that was searched and found. 
+    // -1 if the element it's not found. 
+
+// Requirements 
+    // X -- It should accept an array as 1st parameter.
+    // X -- It should accep an intenger (searchElement) as the 2nd parameter. 
+    
+    // X -- It should return an index. 
+    // It should return the index of the element in the array equal to the searchElement. 
+    // It should return -1 if none of the elements in the array are equal to the searchElement. 
+    // It should just return the index of the element in the array if it's strictly equal to the searhElement.
+
+    // X -- It should accept an optional fromIndex as the 3rd parameter. 
+    // It should start searching for elements from the index specified on fromIndex. 
+    // It should return -1 if the index specified on fromIndex is greater than array.lenght. 
+    // If fromIndex is negative it should start looking for the element from the end. 
+    // It should always return the index of the element (if it exists) counting from the start. 
+    // If fromIndex is equal to 0 the whole array is searched. 
+
+function indexOf(originalArray, searchElement, optionalFromIndex){
+  
+  // If there is a fromIndex specified.  
+  if (arguments.length >= 2){
+    var startCountIndex = optionalFromIndex;
+    // If fromIndex is greater or equal to array.length, return -1.
+    if (optionalFromIndex >= originalArray.length){
+      return -1;
+    }
+    // If fromIndex as negative value, search the array from end to start. 
+    // fromIndex should indicate the number of elements to check
+    if (optionalFromIndex < 0){
+      //startCountIndex = originalArray.length - 1;
+      for (var i = originalArray.length; i > optionalFromIndex*-1; i--){
+        if (originalArray[i] === searchElement){
+          return i
+        } else {
+          return -1;
+        }
+      }
+    }
+    // If fromIndex is lower than array.length, return index of element founded. 
+    for(var i = startCountIndex; i < originalArray.length; i++){
+      if (originalArray[i] === searchElement){
+        return i;
+      }
+    }
+  }
+
+  // If there is no optionalFromIndex;
+  for (var i = 0; i < originalArray.length; i++){
+  // If searchElement it's in the array.
+   if (originalArray[i] === searchElement){
+    return i;
+   }
+  }
+  
+  // If none of the elements corresponds to searchElement
+   if ((originalArray[i] === searchElement) === false){
+     return -1;
+   }
+};
+
+tests ({
+/*   // This test doesn't make much sense. 
+  'It should accept an array as 1st argument/parameter.':function(){
+    var testArray = [1,2,3];
+    indexOf(testArray);
+    eq(Array.isArray(testArray), true);
+  },
+  // This test doesn't make much sense.
+  'It should accep an intenger (searchElement) as the 2nd argument/parameter.':function(){
+    var searchElement = 2; 
+    var testArray = [1,2,3];
+    indexOf(testArray, searchElement);
+    eq(searchElement, 2);
+  }, */
+
+  // This test doesn't make much sense. 
+/*   'It should return an index.':function(){
+    var resultIndexOf = indexOf([], 1);
+    eq(resultIndexOf, ... )
+  }, */
+  'It should return the index of the element in the array equal to the searchElement.':function(){
+    var resultOfIndexOf = indexOf([1,2,3], 2);
+    eq(resultOfIndexOf, 1);
+  },
+  'It should return -1 if none of the elements in the array are equal to the searchElement.':function(){
+    var resultOfIndexOf = indexOf([1,2,3], 4);
+    eq(resultOfIndexOf, -1); 
+  },
+  "It should just return the index of the element in the array if it's strictly equal to the searhElement.":function(){
+    var resultOfIndexOf = indexOf([1,2,3], '1');
+    eq(resultOfIndexOf, -1); 
+  },
+
+  // If there is more than two arguments --> Includes fromIndex
+/*   'It should accept an optional fromIndex as the 3rd parameter.':function(){
+    fail(); 
+  }, */
+
+  'It should start searching for elements from the index specified on fromIndex. ':function(){
+    var resultOfIndexOf = indexOf([10,20,10], 10, 1); 
+    eq(resultOfIndexOf, 2); // returns index of second 1. 
+  },
+  'It should return -1 if the index specified on fromIndex is greater or equal to array.lenght.':function(){
+    var testArray = [1,2,3];
+    var resultIndexOf = indexOf(testArray, 3, 3); 
+    eq(testArray.length, 3);
+    eq(resultIndexOf, -1);
+  },
+  'If fromIndex is negative it should start looking for the element from the end.':function(){
+    resultIndexOf = indexOf([1,2,3,4], 2, -2); 
+    eq(resultIndexOf, -1);
+  },
+  'It should always return the index of the element (if it exists) counting from the start.':function(){
+    resultIndexOf = indexOf([1,2,3,4,5], 2, -5);
+    eq(resultIndexOf, 1);
+  },
+  'If fromIndex is equal to 0 the whole array is searched. ':function(){
+    resultIndexOf = indexOf([1,2,3,4], 2, 0); 
+    eq(resultIndexOf, 1);
+  }
+
+})
+</script> 

@@ -1,0 +1,153 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // Prototype 
+
+  // Function Signature 
+    // function every(array, callback [,optionalThis])
+
+  // Parameters 
+    // Callback 
+        // element 
+        // index 
+        // array 
+    // optionalThis
+
+  // Return Value 
+    // True if all elements return a truthy value; 
+    // False if just one returns false; 
+
+  // Description: 
+
+  // It should run array.length times. 
+
+  // It should return false as soon as a falsy value is found. 
+
+  // It should return true, if all the elements are truhty. 
+  // It should return true, if the array is empty. 
+
+  // It should accept the ith element as the 1st argument to the callback. 
+  // It should accept the index of the ith element as the 2nd argument to the callback.
+  // It should accept the array being processed as the 3rd argument to the callback. 
+
+  // It should permit the callback to access an optionalThis parameter. 
+  // It should return *undifined* as the value of optionalThis parameter if the parameter is not provided. 
+
+  // It should ignore empty indexes in the array. 
+  // It should ignore elements that are pushed after it begins. 
+  // It should ignore elements that have been deleted. 
+
+  function every(array, callback, optionalThis){
+    var elementFalseFound = false;
+    var arrayLength = array.length; 
+
+    if (optionalThis){
+      callback = callback.bind(optionalThis);
+    }
+
+    for(var i = 0; i < arrayLength ; i++){
+      if (i in array){
+        if ( callback(array[i], i, array) === false){
+          elementFalseFound = true; 
+          return false; 
+        }
+      }
+    }
+
+    if (elementFalseFound === false){
+      return true; 
+    }
+  };
+
+  tests({
+    'It should run array.length times.':function(){
+      var numberOfTimesCallbackHasRun = 0; 
+      every([1,2], function(element){
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    },
+
+    'It should accept the ith element as the 1st argument to the callback.':function(){
+      every([1], function(element){
+        eq(element, 1);
+      });
+    },
+    'It should accept the index of the ith element as the 2nd argument to the callback.':function(){
+      every([1], function(element, index){
+        eq(index, 0);
+      });
+    },
+    'It should accept the array being processed as the 3rd argument to the callback.':function(){
+      var testArray = [1,2,3];
+      every(testArray, function(element, index, array){
+        eq(testArray, array);
+      });
+    },
+
+
+    'It should return true, if all the elements are truhty.':function(){
+      var everyResult = every([4,7,9], function (element){
+        return element > 3 
+      });
+      eq(everyResult, true)
+    },
+
+    'It should return false as soon as a falsy value is found. ':function(){
+      var everyResult = every([11,28,6], function(element) {
+        return element > 10; 
+      });
+      eq(everyResult, false)
+    },
+
+    'It should return true, if the array is empty.':function(){
+      var testArray = [];
+      var everyResult = every(testArray, function(element){
+        return element > 1;
+      });
+
+      eq(testArray.length === 0, true);
+      eq(everyResult, true);
+    },
+
+
+    'It should permit the callback to access an optionalThis parameter.':function(){
+      every([1], function(){
+        eq(this.optionalThis, 'I am the value of optionalThis');
+      },{optionalThis: 'I am the value of optionalThis'});
+    },
+    'It should return *undifined* as the value of optionalThis parameter if the parameter is not provided.':function(){
+      every([1], function(){
+        eq(this.optionalThis, undefined);
+      },{});
+    },
+
+    'It should ignore empty indexes in the array.':function(){
+      numberOfTimesCallbackHasRun = 0; 
+      every([1,,3], function(element){
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    },
+    'It should ignore elements that are pushed to the array after it begins.':function(){
+        var numberOfTimesCallbackHasRun = 0;
+        every([2,4,6], function(element, index, array) {
+          numberOfTimesCallbackHasRun++
+          array.push(8);
+          return element < 7;
+        });
+        eq(numberOfTimesCallbackHasRun, 3);
+    },
+    'It should ignore elements that have been deleted.':function(){
+      var numberOfTimesCallbackHasRun = 0; 
+      every([2,4,6], function(element, index, array){
+        numberOfTimesCallbackHasRun++;
+        if (index === 0){
+          delete array[2];
+        }
+        return element < 5; 
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    }
+  });
+</script>

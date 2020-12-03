@@ -1,0 +1,164 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// Prototype implementation: 
+
+  // function find(array, callback, optionalThis){
+  //    for(var i = 0; i < array.length; i++){
+  //        if (callback(array[i], i, array)){
+  //            return i; 
+  //        };
+  //    }
+  // }
+
+// General description: 
+    // findIndex() returns the index of the element that satisfies the cprovided testing function; 
+    // Otherwise, it returns -1; 
+
+// Function signature: 
+    // findIndex(array, callback [,optionalThis]); 
+
+// Parameters: 
+    // array 
+    // callback 
+        // element 
+        // index 
+        // array 
+    // optionalThis 
+
+// Return Value: 
+    // Index of the first element that passes the test.
+    // If no element passes the test, return -1.
+
+// Description
+
+// It should run the callback array.length times. 
+// It should execute the callback until it finds the value where callback returns a truthy value.
+// It should immediately return the element index as soon as callback finds a truthy value. 
+// It should return -1 if callback never returns a truthy value.
+// It should return -1 if the array.length is 0. 
+
+// It should accept the ith element as the 1st argument to the callback. 
+// It should accept the index of the ith element as the 2nd argument to the callback.
+// It should accept the array being processed as the 3rd argument to the callback. 
+
+// It should permit the callback to access an optionalThis parameter. 
+// It should return *undifined* as the value of optionalThis parameter if the parameter is not provided. 
+
+// It should ignore elements that are added after the call to findIdex begins. 
+// It should visit element that are deleted. 
+
+function findIndex(array, callback, optionalThis){
+  var foundAnElement = false; 
+  var arrayLength = array.length; 
+
+  if (optionalThis){
+    callback = callback.bind(optionalThis);
+  }
+
+  // If array is empty, return -1.
+  if(Object.keys(array).length === 0){
+    return -1; 
+  };
+  
+  for(var i = 0; i <arrayLength; i++){
+    if ((callback(array[i], i, array)) === true){
+      // If an element is truthy return the respective index.
+      foundAnElement = true; 
+      return i;
+    }
+  }
+
+  // If no element is truthy, return -1. 
+  if (foundAnElement === false){
+     return -1; 
+  }
+
+};
+
+tests ({
+
+'It should run the callback array.length times.':function(){
+  var numberOfTimesCallbackHasRun = 0; 
+  findIndex([1,2,3], function(element){
+    numberOfTimesCallbackHasRun++;
+  });
+  eq(numberOfTimesCallbackHasRun, 3);
+},
+'It should execute the callback until it finds the value where callback returns a truthy value.':function(){
+  var numberOfTimesCallbackHasRun = 0; 
+  findIndex([3,1,0], function(element){
+    numberOfTimesCallbackHasRun++;
+    return element < 2; 
+  });
+  eq(numberOfTimesCallbackHasRun, 2);
+},
+'It should immediately return the element index as soon as callback finds a truthy value.':function(){
+  var indexOfElementFound = findIndex([1,10,3], function(element, index){
+    return element > 2
+  })
+  eq(indexOfElementFound, 1);
+},
+  
+'It should return -1 if none of the elements satisfies the provided testing function.': function(){
+  var resultOfFindIndex = findIndex([8,20,10], function(element){
+    return element < 5; 
+  })
+  eq(resultOfFindIndex, -1);
+},
+'It should return -1 if the array.length is 0.':function(){
+  var resultOfFindIndex = findIndex([], function(){});
+  eq(resultOfFindIndex, -1);
+},
+
+
+'It should accept the ith element as the 1st argument to the callback.':function(){
+  findIndex([1], function(element){
+    eq(element, 1);
+  });
+},
+'It should accept the index of the ith element as the 2nd argument to the callback.':function(){
+  findIndex([1], function(element, index){
+    eq(index, 0);
+  });
+},
+'It should accept the array being processed as the 3rd argument to the callback.':function(){
+  var testArray = [1,2]
+  findIndex(testArray, function(element, index , array){
+    eq(array, testArray)
+  })
+},
+
+
+'It should permit the callback to access an optionalThis parameter.':function(){
+  findIndex([1], function(){
+    eq(this.optionalThis, 'I am the value of optionalThis');
+  },{optionalThis: 'I am the value of optionalThis'});
+},
+'It should return *undifined* as the value of optionalThis parameter if the parameter is not provided.':function(){
+  findIndex([1], function(){
+    eq(this.optionalThis, undefined);
+  });
+},
+
+'It should ignore elements that are added after the call to findIdex begins.':function(){
+  numberOfTimesCallbackHasRun = 0; 
+  findIndex([1,2,3], function(element, index, array){
+    array.push(4); 
+    numberOfTimesCallbackHasRun++;
+  })
+  eq(numberOfTimesCallbackHasRun, 3);
+},
+
+'It should visit element that are deleted.':function(){
+  var numberOfTimesCallbackHasRun = 0; 
+  findIndex([1,2,3], function(element, index, array){
+    if (index === 0){
+      delete array[2];
+    }
+    numberOfTimesCallbackHasRun++;
+  })
+  eq(numberOfTimesCallbackHasRun, 3);
+}
+});
+</script> 

@@ -1,0 +1,251 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// Things to see 
+  //Parameters --> concat returns a SHALLOW COPY of the existing array 
+  // Description --> it DOES NOT RECURSE into nested arrays 
+  //             --> returns a SHALLOW COPY that contains copies of the same elements combined from the original arrays
+  //             --> OBJECT REFERENCES 
+
+// FP: 
+  // function concat(originalArray, value1, value2, ..., valueN){
+  //   var resultSoFar = originalArray; 
+  //    if (arguments > 1){
+  //      for(var i = 0; i < arguments; i++){
+  //        resulSoFar.push(arguments[i])
+  //      }
+  //    }
+  //    return resultSoFar;
+  // }
+
+// General Description: 
+  // The concat() method is used to merge two or more arrays. 
+  // This method returns a new array (does not change the existing ones)
+
+// Function signature: 
+  // old_array.concat([value1[, value2[, ...[, valueN]]]])
+  // concat(originalArray[,value1[, value2[, ...[, valueN]]]]))
+
+// Parameters: 
+  // [valueN] --> Arrays and/or values to concatenate into a new array. 
+  //          --> If there's no valueN parameters concant returns a shallow copy of originalArray. 
+  //             --> It retuns a copy of originalArray 
+
+      
+// Return value 
+  // a new array instance. 
+
+  // What is an instance? 
+    //Each realized variation of an object is an instance.
+    //A new array instance = a possible variation of an array. 
+
+// Description 
+  // It should return an array.
+  // It should return a new array.
+
+  // If no valueN parameters are provided it should return the originalArray.
+  
+  // It should pass the values of the old array in order to the new array.
+  // It should pass the arguments in order to the new array.
+  // It should pass first the values of the old array and then the new values to the new array. 
+
+  // It should not recurse into nested arrays. 
+    // (e.g. oldArray = [1,2,[3,4] -> concat(5,6) -> newArray = [1,2,[3,4],5,6]])
+  
+  // It should not alter *this*. 
+  // It should not modify any of the arrays provided as arguments.
+  // It should not modify the originalArray after concatenation. 
+  
+  // ?? If a referenced object is modified the changes should be visible in the new array. 
+  // ?? If a referenced object is modified the changes should be visible to the original array. 
+  
+  // It should copy the values of primitives into the new array.
+  
+  // It should throw a SyntaError if originalArray is not an array. 
+  
+  // It should actually concatenate. 
+
+function concat(originalArray){
+  resultOfConcat = [];
+  
+  //If originalArray is not an array, throw Syntax Error. 
+  if (Array.isArray(originalArray) === false){
+    throw new SyntaxError('Invalid or unexpected token');
+  }
+
+  // If theres is just the originalArray. 
+  for(var i = 0; i < originalArray.length; i++){
+    resultOfConcat[i] = originalArray[i];
+  }
+
+  if (arguments.length > 1){
+    //If argument is an array. 
+    var indexOfArgument = 1; 
+    var indexOfArray = 0;
+    if (Array.isArray(arguments[indexOfArgument])){   
+        for(var i = 1; i <= arguments[indexOfArgument].length; i++){
+        resultOfConcat.push(arguments[indexOfArgument][indexOfArray]); //This returns the whole array as an element (it's wrong)
+        indexOfArray++;
+        }
+    }else{
+    // If it's NOT an array. 
+       for(var i = 1; i < arguments.length; i++){
+        resultOfConcat.push(arguments[i]);
+       }
+    }
+  }
+    return resultOfConcat;
+};
+
+
+
+
+tests({
+
+  // Test 'It should concatenate more than one array doesn't' pass' 
+
+  'It should return an array.':function(){
+    var resultOfConcat = concat([]);
+    eq(Array.isArray(resultOfConcat), true)
+  },
+  'It should return a new array.':function(){
+    var testArray = [];
+    var resultOfConcat = concat(testArray);
+    eq(Array.isArray(resultOfConcat), true);
+    eq(resultOfConcat !== testArray, true);
+  }, 
+
+
+  'If no valueN parameters are provided it should return a shallow copy of the the originalArray.':function(){
+    var testArray = [1];
+    var newArray = concat(testArray);
+    
+    eq(testArray[0], 1);
+    eq(newArray[0], 1);
+  }, 
+
+
+  'It should pass the values of the original array in order to the new array.':function(){
+    var testArray = [1,2,3];
+    var newArray = concat(testArray);
+    eq(newArray[0], 1);
+    eq(newArray[1], 2);
+    eq(newArray[2], 3);
+  }, 
+  
+  'It should add new values after the originalArray to the new array':function(){
+    var testArray = [1,2,3];
+    var newArray = concat(testArray, 10);
+    eq(testArray !== newArray, true);
+    eq(testArray.length, 3);
+    eq(newArray.length, 4);
+  },
+ 
+  'It should pass first the values of the old array and then the new values to the new array.':function(){
+    var testArray = [1,2,3];
+    var newArray = concat(testArray, 10);
+    eq(newArray[0], 1);
+    eq(newArray[1], 2);
+    eq(newArray[2], 3);
+    eq(newArray[3], 10);
+  }, 
+
+  'It should pass each value of the new arrays as one, not the hole array as a value': function(){
+    var testArray = [1,2,3];
+    var newArray = concat(testArray, [4,5,6]);
+    
+    eq(newArray[3], 4);
+    eq(newArray[4], 5);
+    eq(newArray[5], 6);
+    eq(newArray.length, 6);
+  },
+
+  'It should not recurse into nested arrays.':function(){
+    var nestedArray = concat([1,2,[3,4,5]]);
+    eq[nestedArray[1][0], 3];
+    eq[nestedArray[1][1], 4];
+    eq[nestedArray[1][2], 5];
+    eq(nestedArray.length, 3);
+  }, 
+
+
+  'It should not alter *this*.':function(){
+    var resultOfConcat = concat([1,2,3], this);
+    eq (resultOfConcat[3], this); 
+  }, 
+  'It should not modify any of the arrays provided as arguments.':function(){
+    var testArray = [1,2,3];
+    var firstArray = [5,6];
+    var secondArray = [7,8];
+    var newArray = concat(testArray, firstArray, secondArray);
+    eq (firstArray[0], 5);
+    eq (firstArray[1], 6);
+    eq (secondArray[0], 7);
+    eq (secondArray[1], 8);
+    eq(firstArray && testArray !== newArray, true);
+  }, 
+  'It should not modify the originalArray after concatenation.':function(){
+    var testArray = [1,2,3];
+    var resultOfConcat = concat(testArray, [4,5,6]);
+    eq(Array.isArray(resultOfConcat), true);
+    eq(resultOfConcat !== testArray, true);
+    eq(testArray.length === 3, true);
+  }, 
+
+  'If a referenced object is modified the changes should be visible in the new array.':function(){
+    var newObject = {property: 'value'};
+    var newArray = concat([1], newObject);
+    newObject.property = 'new value';
+    eq(newArray[1].property, 'new value');
+    eq(newArray[1], newObject);
+
+
+  }, 
+  'If a referenced object is modified in the new array, the changes should be visible to the original array.':function(){
+    var originalArray = [1, {property: 'value'}];
+    var newArray = originalArray.concat([3,4]);
+    // This should be visible to originalArray 
+    newArray[1].property = 'new value';
+    eq(originalArray[1].property, 'new value');
+
+  }, 
+
+  ' It should actually concatenate':function(){
+    var originalArray = [1,2,3];
+    var resultOfConcat = concat(originalArray, [4,5,6]);
+    eq(resultOfConcat.length, 6);
+    eq(resultOfConcat[0], 1);
+    eq(resultOfConcat[5], 6);
+  },
+
+  'It should be capable of concatenating more than one argument to the original array':function(){
+    // (e.g. concat(originalArray, [2], [3], [4]))
+    var originalArray = [1];
+    var resultOfConcat = concat(originalArray, [2], [3], [4]);
+    eq(resultOfConcat.length, 4);
+  },
+
+  // Number, String, Boolean, Null, undefined (primitives)
+  'It should copy the values of primitives into the new array.':function(){
+    var resultOfConcat = concat([1], 'string', 2, true, undefined, null);
+    eq (resultOfConcat.length, 6);
+    eq(resultOfConcat[1], 'string');
+    eq(resultOfConcat[2], 2);
+    eq(resultOfConcat[3], true);
+    eq(resultOfConcat[4], undefined);
+    eq(resultOfConcat[5], null);
+    
+  }, 
+
+  'It should throw a SyntaxError if originalArray is not an array, and there is no extra values.':function(){
+    var syntaxError = false; 
+    try{
+      concat(100)
+    } catch (error) {
+      syntaxError = error instanceof SyntaxError; 
+    }
+    eq(syntaxError, true);
+  },
+})
+
+</script> 
